@@ -12,7 +12,7 @@ function App() {
 
   return (
     <div className="App" style={{ maxWidth: 600, margin: "40px auto" }}>
-      <h1>React 前端加密 / 解密演示</h1>
+      <h1>React 前端加密 / 解密</h1>
 
       <h2>1. 输入明文并加密</h2>
       <textarea
