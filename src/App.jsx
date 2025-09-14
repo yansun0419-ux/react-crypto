@@ -5,51 +5,88 @@ import "./App.css";
 function App() {
   const [plain, setPlain] = useState("");
   const [cipher, setCipher] = useState("");
-  const [decrypted, setDecrypted] = useState("");
 
   const handleEncrypt = () => setCipher(encrypt(plain));
-  const handleDecrypt = () => setDecrypted(decrypt(cipher));
+  const handleDecrypt = () => setPlain(decrypt(cipher));
 
   return (
-    <div className="App" style={{ maxWidth: 600, margin: "40px auto" }}>
-      <h1>React 前端加密 / 解密</h1>
+    <div
+      className="App"
+      style={{ maxWidth: 1200, margin: "40px auto", padding: "0 20px" }}
+    >
+      <h1 style={{ textAlign: "center" }}>加密 / 解密 小工具</h1>
 
-      <h2>1. 输入明文并加密</h2>
-      <textarea
-        rows={4}
-        style={{ width: "100%" }}
-        value={plain}
-        onChange={(e) => setPlain(e.target.value)}
-        placeholder="输入要加密的内容"
-      />
-      <button onClick={handleEncrypt}>加密</button>
-      {cipher && (
-        <>
-          <h3>密文（可复制给对方）</h3>
+      <div style={{ display: "flex", gap: "40px", marginTop: "40px" }}>
+        {/* 左侧明文区域 */}
+        <div style={{ flex: 1 }}>
+          <h2>明文</h2>
           <textarea
-            rows={4}
-            style={{ width: "100%" }}
-            readOnly
-            value={cipher}
+            rows={10}
+            style={{
+              width: "100%",
+              padding: "10px",
+              border: "1px solid #ccc",
+              borderRadius: "4px",
+              fontSize: "14px",
+              fontFamily: "monospace",
+            }}
+            value={plain}
+            onChange={(e) => setPlain(e.target.value)}
+            placeholder="输入要加密的内容或解密后的明文将显示在这里"
           />
-        </>
-      )}
+          <div style={{ marginTop: "10px" }}>
+            <button
+              onClick={handleEncrypt}
+              style={{
+                padding: "10px 20px",
+                backgroundColor: "#007bff",
+                color: "white",
+                border: "none",
+                borderRadius: "4px",
+                cursor: "pointer",
+                fontSize: "16px",
+              }}
+            >
+              加密 →
+            </button>
+          </div>
+        </div>
 
-      <h2>2. 粘贴密文并解密</h2>
-      <textarea
-        rows={4}
-        style={{ width: "100%" }}
-        value={cipher}
-        onChange={(e) => setCipher(e.target.value)}
-        placeholder="粘贴收到的密文"
-      />
-      <button onClick={handleDecrypt}>解密</button>
-      {decrypted && (
-        <>
-          <h3>解密后的原文</h3>
-          <p>{decrypted}</p>
-        </>
-      )}
+        {/* 右侧密文区域 */}
+        <div style={{ flex: 1 }}>
+          <h2>密文</h2>
+          <textarea
+            rows={10}
+            style={{
+              width: "100%",
+              padding: "10px",
+              border: "1px solid #ccc",
+              borderRadius: "4px",
+              fontSize: "14px",
+              fontFamily: "monospace",
+            }}
+            value={cipher}
+            onChange={(e) => setCipher(e.target.value)}
+            placeholder="粘贴要解密的密文或加密后的密文将显示在这里"
+          />
+          <div style={{ marginTop: "10px" }}>
+            <button
+              onClick={handleDecrypt}
+              style={{
+                padding: "10px 20px",
+                backgroundColor: "#28a745",
+                color: "white",
+                border: "none",
+                borderRadius: "4px",
+                cursor: "pointer",
+                fontSize: "16px",
+              }}
+            >
+              ← 解密
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
