@@ -7,12 +7,27 @@ function App() {
   const [cipher, setCipher] = useState("");
   const [password, setPassword] = useState("");
   const [isPasswordValid, setIsPasswordValid] = useState(false);
+  const [savePassword, setSavePassword] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
-    const savedPassword = localStorage.getItem("cryptoPassword");
-    if (savedPassword) {
-      setPassword(savedPassword);
-      setIsPasswordValid(true);
+    // 加载保存密码设置
+    const savedSavePassword =
+      localStorage.getItem("savePasswordSetting") === "true";
+    setSavePassword(savedSavePassword);
+
+    // 加载显示密码设置
+    const savedShowPassword =
+      localStorage.getItem("showPasswordSetting") === "true";
+    setShowPassword(savedShowPassword);
+
+    // 如果允许保存密码，则加载密码
+    if (savedSavePassword) {
+      const savedPassword = localStorage.getItem("cryptoPassword");
+      if (savedPassword) {
+        setPassword(savedPassword);
+        setIsPasswordValid(true);
+      }
     }
   }, []);
 
@@ -22,8 +37,28 @@ function App() {
     setIsPasswordValid(newPassword.length > 0);
   };
 
+  const handleSavePasswordChange = (e) => {
+    const checked = e.target.checked;
+    setSavePassword(checked);
+    localStorage.setItem("savePasswordSetting", checked.toString());
+
+    if (!checked) {
+      // 如果取消勾选，立即删除保存的密码
+      localStorage.removeItem("cryptoPassword");
+    } else if (password) {
+      // 如果勾选且有密码，保存密码
+      localStorage.setItem("cryptoPassword", password);
+    }
+  };
+
+  const handleShowPasswordChange = (e) => {
+    const checked = e.target.checked;
+    setShowPassword(checked);
+    localStorage.setItem("showPasswordSetting", checked.toString());
+  };
+
   const savePasswordToStorage = () => {
-    if (password) {
+    if (password && savePassword) {
       localStorage.setItem("cryptoPassword", password);
     }
   };
@@ -61,7 +96,7 @@ function App() {
 
   return (
     <div className="App" style={{ maxWidth: 1200 }}>
-      <h1 style={{ textAlign: "center" }}>加密 / 解密 小工具</h1>
+      <h1 style={{ textAlign: "center" }}>加解密小工具</h1>
 
       {/* 密码输入区域 */}
       <div
@@ -81,10 +116,10 @@ function App() {
             whiteSpace: "nowrap",
           }}
         >
-          加密/解密密码：
+          加解密密码：
         </label>
         <input
-          // type="password"
+          type={showPassword ? "text" : "password"}
           value={password}
           onChange={handlePasswordChange}
           placeholder="请输入加密/解密密码"
@@ -97,7 +132,7 @@ function App() {
             boxSizing: "border-box",
           }}
         />
-        <div
+        {/* <div
           style={{
             fontSize: "12px",
             color: isPasswordValid ? "#28a745" : "#dc3545",
@@ -105,10 +140,57 @@ function App() {
           }}
         >
           {isPasswordValid ? "✓ 密码已设置" : "⚠ 请输入密码"}
-        </div>
+        </div> */}
       </div>
 
-      <div style={{ display: "flex", gap: "40px", marginTop: "10px" }}>
+      {/* 密码选项区域 */}
+      <div
+        style={{
+          display: "flex",
+          gap: "20px",
+          justifyContent: "center",
+          marginTop: "10px",
+          marginBottom: "20px",
+        }}
+      >
+        <label
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "5px",
+            fontSize: "14px",
+            cursor: "pointer",
+          }}
+        >
+          <input
+            type="checkbox"
+            checked={savePassword}
+            onChange={handleSavePasswordChange}
+            style={{ cursor: "pointer" }}
+          />
+          保存密码
+        </label>
+
+        <label
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "5px",
+            fontSize: "14px",
+            cursor: "pointer",
+          }}
+        >
+          <input
+            type="checkbox"
+            checked={showPassword}
+            onChange={handleShowPasswordChange}
+            style={{ cursor: "pointer" }}
+          />
+          显示密码
+        </label>
+      </div>
+
+      <div style={{ display: "flex", gap: "20px" }}>
         {/* 左侧明文区域 */}
         <div style={{ flex: 1 }}>
           <h2>明文</h2>
@@ -137,7 +219,7 @@ function App() {
             <button
               onClick={() => copyToClipboard(plain, "明文")}
               style={{
-                padding: "10px 20px",
+                padding: "5px 15px",
                 backgroundColor: "#6c757d",
                 color: "white",
                 border: "none",
@@ -151,7 +233,7 @@ function App() {
             <button
               onClick={handleEncrypt}
               style={{
-                padding: "10px 20px",
+                padding: "5px 15px",
                 backgroundColor: "#007bff",
                 color: "white",
                 border: "none",
@@ -160,7 +242,7 @@ function App() {
                 fontSize: "16px",
               }}
             >
-              加密 →
+              加密
             </button>
           </div>
         </div>
@@ -193,7 +275,7 @@ function App() {
             <button
               onClick={handleDecrypt}
               style={{
-                padding: "10px 20px",
+                padding: "5px 15px",
                 backgroundColor: "#28a745",
                 color: "white",
                 border: "none",
@@ -202,12 +284,12 @@ function App() {
                 fontSize: "16px",
               }}
             >
-              ← 解密
+              解密
             </button>
             <button
               onClick={() => copyToClipboard(cipher, "密文")}
               style={{
-                padding: "10px 20px",
+                padding: "5px 15px",
                 backgroundColor: "#6c757d",
                 color: "white",
                 border: "none",
